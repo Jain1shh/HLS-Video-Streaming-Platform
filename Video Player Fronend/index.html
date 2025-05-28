@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Adaptive Video Player</title>
+    <style>
+        body { font-family: sans-serif; background: #111; color: #fff; text-align: center; }
+        video { width: 80%; margin-top: 20px; background: black; }
+        select { margin-top: 20px; padding: 5px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+    <h1>Adaptive Streaming Video Player</h1>
+
+    <label for="videoId">Enter Video ID:</label>
+    <input type="text" id="videoId" placeholder="Video ID here">
+    <button onclick="loadVideo()">Load Video</button>
+
+    <br>
+    <video id="video" controls></video>
+    <br>
+    <label for="qualitySelect">Select Quality:</label>
+    <select id="qualitySelect"></select>
+
+    <script src="player.js"></script>
+</body>
+</html>
