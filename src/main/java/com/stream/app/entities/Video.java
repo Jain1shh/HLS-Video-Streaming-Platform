@@ -1,5 +1,6 @@
 package com.stream.app.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
@@ -18,6 +19,7 @@ public class Video {
     }
 
     @Id
+    @Column(name = "video_id")
     private String videoId;
     private String videoTitle;
     private String videoDescription;
