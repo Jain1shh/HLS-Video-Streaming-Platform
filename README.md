@@ -1,7 +1,6 @@
 # HLS Video Streaming Platform
 
 Video streaming platform with HLS processing using Java 21, Spring Boot 3, and FFmpeg.
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # FFmpeg HLS Processing Guide
 
@@ -17,12 +16,27 @@ Video streaming platform with HLS processing using Java 21, Spring Boot 3, and F
 - **Seamless Playback**: No buffering interruptions during quality changes
 - **HTTP-based**: Works through firewalls and standard web infrastructure
 
-## How FFmpeg Processes HLS
+## How FFmpeg Processes HLS(without adaptive bit rates)
 
 Our application uses this FFmpeg command to convert videos to HLS format:
 
 ```bash
 ffmpeg -i "input_video.mp4" -codec: copy -start_number 0 -hls_time 10 -hls_list_size 0 -f hls "output_playlist.m3u8"
+```
+
+## Adaptive bit rates
+
+For adaptive bitrate streaming with multiple qualities (which we have implemented):
+```bash
+# Multiple bitrate example (more complex)
+ffmpeg -i input.mp4 \
+  -map 0:v -map 0:a -map 0:v -map 0:a \
+  -c:v:0 libx264 -b:v:0 2M -s:v:0 1280x720 \
+  -c:v:1 libx264 -b:v:1 500k -s:v:1 640x360 \
+  -c:a copy \
+  -f hls -hls_time 10 -hls_list_size 0 \
+  -master_pl_name master.m3u8 \
+  -var_stream_map "v:0,a:0 v:1,a:1" output_%v.m3u8
 ```
 
 ### Command Breakdown
@@ -71,7 +85,7 @@ Using `-codec: copy` means:
 - **Resource Efficient**: Minimal CPU usage
 - **Quick Turnaround**: Processing completes in seconds vs minutes
 
-## File Structure After Processing
+## File Structure After Processing(without adaptive bit rates)
 
 ```
 output_folder/
@@ -109,21 +123,6 @@ output_folder/
 - **No Quality Adaptation**: Single bitrate only
 - **Codec Dependency**: Output quality depends on input codec
 - **File Size**: Large input files create large segments
-
-## Alternative Commands
-
-For adaptive bitrate streaming with multiple qualities:
-```bash
-# Multiple bitrate example (more complex)
-ffmpeg -i input.mp4 \
-  -map 0:v -map 0:a -map 0:v -map 0:a \
-  -c:v:0 libx264 -b:v:0 2M -s:v:0 1280x720 \
-  -c:v:1 libx264 -b:v:1 500k -s:v:1 640x360 \
-  -c:a copy \
-  -f hls -hls_time 10 -hls_list_size 0 \
-  -master_pl_name master.m3u8 \
-  -var_stream_map "v:0,a:0 v:1,a:1" output_%v.m3u8
-```
 
 ## Technical Details
 
@@ -177,6 +176,15 @@ Body:
 ```
 
 ### Stream Video
+Returns the main M3U8 playlist file that video players use to initiate streaming. This endpoint sets the correct MIME type (application/vnd.apple.mpegurl) so browsers know how to handle the response.
 ```http
 GET /api/videos/stream/{videoId}
 ```
+
+### Segment Streaming Endpoint
+This is where the magic happens. The wildcard pattern captures requests for individual video segments (.ts files) and additional playlist files.
+```http
+GET /api/videos/stream/{videoId}/**
+```
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
