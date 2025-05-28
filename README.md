@@ -118,11 +118,6 @@ output_folder/
 - Single quality stream (no adaptive bitrate complexity)
 - Straightforward implementation
 
-## Limitations
-
-- **No Quality Adaptation**: Single bitrate only
-- **Codec Dependency**: Output quality depends on input codec
-- **File Size**: Large input files create large segments
 
 ## Technical Details
 
