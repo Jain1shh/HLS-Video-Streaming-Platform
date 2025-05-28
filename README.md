@@ -18,7 +18,7 @@ Video streaming platform with HLS processing using Java 21, Spring Boot 3, and F
 
 ## How FFmpeg Processes HLS(without adaptive bit rates)
 
-Our application uses this FFmpeg command to convert videos to HLS format:
+to convert videos to HLS format:
 
 ```bash
 ffmpeg -i "input_video.mp4" -codec: copy -start_number 0 -hls_time 10 -hls_list_size 0 -f hls "output_playlist.m3u8"
